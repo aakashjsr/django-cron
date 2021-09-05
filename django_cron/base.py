@@ -218,8 +218,10 @@ class CronScheduler(object):
                     # Set up for this function to run again
                     Timer(polling_frequency, self.execute).start()
                 return
-
+            
             jobs = models.Job.objects.filter(queued=True).order_by('last_run')
+            # This makes sure last_run == None job come first.
+            jobs = sorted(list(jobs), key=lambda j: j.last_run or datetime(2020,1,1))
 
             for job in jobs:
 
