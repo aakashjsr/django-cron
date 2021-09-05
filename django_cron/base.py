@@ -219,7 +219,7 @@ class CronScheduler(object):
                     Timer(polling_frequency, self.execute).start()
                 return
 
-            jobs = models.Job.objects.filter(queued=True).order_by(last_run)
+            jobs = models.Job.objects.filter(queued=True).order_by('last_run')
 
             for job in jobs:
 
