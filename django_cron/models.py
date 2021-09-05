@@ -36,15 +36,24 @@ class Job(models.Model):
     
     # Time between job runs (in minutes) // default: 1 day
     run_frequency = models.PositiveIntegerField(default=1440)
-    last_run = models.DateTimeField(default=None, null=True)
+    last_run = models.DateTimeField(default=timezone.now, null=True)
     
     instance = models.TextField()
     args = models.TextField()
     kwargs = models.TextField()
     queued = models.BooleanField(default=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
+    
+    def debug(self):
+        from django_cron.base import pickle_loads_and_decode
+        inst = pickle_loads_and_decode(str(self.instance))
+        args = pickle_loads_and_decode(str(self.args))
+        kwargs = pickle_loads_and_decode(str(self.kwargs))
+        inst.run(*args, **kwargs)
+        self.last_run = now()
+        self.save()
 
 
 class Cron(models.Model):

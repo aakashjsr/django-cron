@@ -219,9 +219,7 @@ class CronScheduler(object):
                     Timer(polling_frequency, self.execute).start()
                 return
 
-            jobs = models.Job.objects.filter(queued=True)
-            if jobs and cron_settings.SINGLE_JOB_MODE:
-                jobs = [jobs[0]]  # When SINGLE_JOB_MODE is on we only run one job at a time
+            jobs = models.Job.objects.filter(queued=True).order_by(last_run)
 
             for job in jobs:
 
@@ -273,7 +271,10 @@ class CronScheduler(object):
                             run_job_with_retry()
                         else:
                             run_job()
-
+                        # When SINGLE_JOB_MODE is on we only run one job at a time
+                        if cron_settings.SINGLE_JOB_MODE:
+                            break
+                        
                     except Exception as err:
                         # If the job throws an error, just remove it from
                         # the queue. That way we can find/fix the error and
