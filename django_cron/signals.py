@@ -23,4 +23,4 @@ THE SOFTWARE.
 from django.dispatch import Signal
 
 cron_queued = Signal()
-cron_done = Signal(providing_args=["job"])
+cron_done = Signal("job")
