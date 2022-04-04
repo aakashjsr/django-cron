@@ -1,7 +1,7 @@
-from django.conf.urls import url
+from django.urls import re_path
 
 import django_cron.admin_views
 
 urlpatterns = [
-    url(r'^restart/$', django_cron.admin_views.restart),
+    re_path(r'^restart/$', django_cron.admin_views.restart),
 ]
